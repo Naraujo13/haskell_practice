@@ -15,7 +15,7 @@ todosIguais a b c = (a == b) && (b == c)
 
 
 quantosSaoIguais :: Int -> Int -> Int -> Int
-quantosSaoIguais a b c 
+quantosSaoIguais a b c
     | (a == b) && (b == c)                  = 3
     | (a == b) || (a == c) || (b == c)      = 2
     | otherwise  = 0
@@ -65,7 +65,7 @@ somaNaturais a = a + somaNaturais(a-1)
 -- 1
 
 maxInt :: Int -> Int -> Int
-maxInt a b 
+maxInt a b
     | (a > b)   = a
     | otherwise = b
 
@@ -177,7 +177,7 @@ tabela a = tabela (a-1) ++ "Semana " ++ show(a) ++ "\t" ++ show(vendas a) ++ "\n
 
 
 -- 1
-    
+
 adicionaTupla :: (Int, Int) -> Int
 adicionaTupla (a, b) = (a + b)
 
@@ -197,12 +197,12 @@ ordenaTupla :: (Int, Int, Int) -> (Int, Int, Int)
 ordenaTupla (a, b, c)
     | (a <= b && b <= c) = (a, b, c)
     | (a > b) = ordenaTupla (b, a, c)
-    | (b > c) = ordenaTupla (a, c, b) 
+    | (b > c) = ordenaTupla (a, c, b)
 
 -- 5
 
 isZeroVendas :: Int -> (Int, Bool)
-isZeroVendas n 
+isZeroVendas n
     | (vendas n == 0) = (vendas n, True)
     | otherwise = (vendas n, False)
 
@@ -225,7 +225,7 @@ sbcup = ("Metro 2033", "Dmitry Glutoevsky", 38437635)
 
 -------- Lista 4 11/04 -----------
 
--- Exemplo 1 de Aula 
+-- Exemplo 1 de Aula
 
 somaLista :: [Int] -> Int
 somaLista [] = 0
@@ -236,7 +236,7 @@ somaLista (a : x) = a + somaLista x
 retira :: Int -> [a] -> [a]
 retira 0 (x:xs) = x:xs
 retira a [] = []
-retira a (x:xs) = retira (a-1) (xs) 
+retira a (x:xs) = retira (a-1) (xs)
 
 -- 1
 
@@ -266,10 +266,83 @@ andLista (a : x) = a && andLista x
 concatLista :: [[Int]] ->[Int]
 concatLista [] = []
 concatLista ([]:xss) = concatLista xss
-concatLista ((x:xs):xss) = x : concatLista (xs:xss) 
+concatLista ((x:xs):xss) = x : concatLista (xs:xss)
 
 
--- 6 
+-- 6
 inverteLista :: [Int] -> [Int]
 inverteLista [] = []
 inverteLista (a : x) = inverteLista x ++ [a]
+
+
+-------- Lista 5 17/04 -----------
+
+-- Exemplo 1 - Insertion Sort
+
+iSort :: [Int] -> [Int]
+iSort [] = []
+iSort (x:xs) = ins x (iSort xs)
+
+ins :: Int -> [Int] -> [Int]
+ins n [] = [n]
+ins n (x:xs) = if (n > x) then (x : ins n xs) else (n : x : xs)
+
+-- Exemplo 2 - Quick Sort
+
+qSort :: [Int] -> [Int]
+qSort [] = []
+qSort (x:xs) = qSort(menores x xs) ++ [x] ++ qSort(maioresOuIguais x xs)
+
+menores :: Int -> [Int] -> [Int]
+menores n [] = []
+menores n (x:xs) = if (x < n) then (x : menores n xs) else (menores n xs)
+
+maioresOuIguais :: Int -> [Int] -> [Int]
+maioresOuIguais n [] = []
+maioresOuIguais n (x:xs) = if (x >= n) then (x : maioresOuIguais n xs) else (maioresOuIguais n xs)
+
+-- Exemplo 3 - Insertion Sort sem repetições
+iUniqueSort :: [Int] -> [Int]
+iUniqueSort [] = []
+iUniqueSort (x:xs) = uIns x (iUniqueSort xs)
+
+uIns :: Int -> [Int] -> [Int]
+uIns n [] = [n]
+uIns n (x:xs) = if (n > x) then (x : uIns n xs) else if (n == x) then (x : xs) else (n : x : xs)
+
+-- Exemplo 4 - Retornar Máximo e Mínimo de uma Lista
+
+minMaxList :: [Int] -> (Int, Int)
+minMaxList [] = (0, 0)
+minMaxList x = (head(qSort x), last(qSort x))
+
+
+-- 1
+
+exists :: Int -> [Int] -> Bool
+exists n [] = False
+exists n (x:xs) = if (n == x) then True else (exists n xs)
+
+
+-- 2
+
+existsNum :: Int -> [Int] -> Int
+existsNum n [] = 0
+existsNum n (x:xs) = if (n == x) then (1 + existsNum n xs) else (existsNum n xs)
+
+-- 3 O três é idiota
+
+-- 4
+dropDuplicates :: [Int] -> [Int]
+dropDuplicates [] = []
+dropDuplicates (x:xs) = if (existsNum x xs > 0) then (dropDuplicates (dropElement x xs)) else (x : dropDuplicates xs)
+
+dropElement :: Int -> [Int] -> [Int]
+dropElement n [] = []
+dropElement n (x:xs) = if (n == x) then (dropElement n xs) else (x : dropElement n xs)
+
+-- 5
+
+existsHipster :: Int -> [Int] -> Bool
+existsHipster n [] = False
+existsHipster n x = iSort x
