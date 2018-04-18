@@ -316,6 +316,16 @@ minMaxList :: [Int] -> (Int, Int)
 minMaxList [] = (0, 0)
 minMaxList x = (head(qSort x), last(qSort x))
 
+-- Exemplo 5 - QuickSort decrescente
+
+iSortDec :: [Int] -> [Int]
+iSortDec [] = []
+iSortDec (x:xs) = insDec x (iSortDec xs)
+
+insDec :: Int -> [Int] -> [Int]
+insDec n [] = [n]
+insDec n (x:xs) = if (n < x) then (x : insDec n xs) else (n : x : xs)
+
 
 -- 1
 
@@ -333,6 +343,7 @@ existsNum n (x:xs) = if (n == x) then (1 + existsNum n xs) else (existsNum n xs)
 -- 3 O três é idiota
 
 -- 4
+
 dropDuplicates :: [Int] -> [Int]
 dropDuplicates [] = []
 dropDuplicates (x:xs) = if (existsNum x xs > 0) then (dropDuplicates (dropElement x xs)) else (x : dropDuplicates xs)
@@ -343,6 +354,73 @@ dropElement n (x:xs) = if (n == x) then (dropElement n xs) else (x : dropElement
 
 -- 5
 
-existsHipster :: Int -> [Int] -> Bool
-existsHipster n [] = False
-existsHipster n x = iSort x
+-- existsHipster :: Int -> [Int] -> Bool
+-- existsHipster n [] = False
+-- existsHipster n x = iSort
+
+
+-------- Lista Extra 18/04 -----------
+
+-- 1
+retornaUltimo :: [a] -> a
+retornaUltimo [] = error ("Empty List")
+retornaUltimo(x:[]) = x
+retornaUltimo (x:xs) = retornaUltimo(xs)
+
+-- 2
+
+getPosition :: Int -> [a] -> a
+getPosition n [] = error ("First argument is larger than list size")
+getPosition 0 (x:xs) = x
+getPosition n (x:xs) = getPosition (n-1) xs
+
+-- 3
+
+getUntil :: Int -> [a] -> [a]
+getUntil n [] = []
+getUntil 0 (x:xs) = [x]
+getUntil n (x:xs) = x : getUntil (n-1) xs
+
+-- 4
+
+removeUntil :: Int -> [a] -> [a]
+removeUntil n [] = []
+removeUntil 0 (x:xs) = xs
+removeUntil n (x:xs) = removeUntil (n-1) xs
+
+-- 5
+
+listMean :: [Int] -> Float
+listMean [] = error ("Empty List")
+listMean x = fromIntegral (somaLista x) / fromIntegral (length x)
+
+-- 6
+
+getTop :: Int -> [Int] -> [Int]
+getTop n [] = []
+getTop 0 x = []
+getTop n x = getUntil (n-1) (iSortDec x)
+
+-- 7
+
+howManyAreBigger :: Int -> [Int] -> Int
+howManyAreBigger n [] = 0
+howManyAreBigger n (x:xs)
+    | (x > n)   = 1 + howManyAreBigger n xs
+    | otherwise = howManyAreBigger n xs
+
+-- 8
+
+concatena :: [a] -> [a] -> [a]
+concatena [] [] = []
+concatena [] (x:xs) = x : concatena [] xs
+concatena (x:xs) [] = x : concatena xs []
+concatena (x:xs) y = x : concatena xs y
+
+-- 9
+
+intercala :: [a] -> [a] -> [a]
+intercala x [] = x
+intercala [] x = x
+intercala (x:xs) (y:ys) = x : y : intercala xs ys
+
