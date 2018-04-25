@@ -246,7 +246,7 @@ dobraLista (a : x) = (2*a) : dobraLista x
 
 -- 2
 
-tamanho ::[Int] -> Int
+tamanho ::[a] -> Int
 tamanho [] = 0
 tamanho (a : x) = 1 + tamanho x
 
@@ -511,14 +511,65 @@ slice 0 0 (x:xs) = [x]
 slice 0 m (x:xs) = x : (slice 0 (m-1) xs)
 slice n m (x:xs) = slice (n-1) (m-1) xs
 
--- 18 -- Falta pra n < 0
+-- 18
 
 rotateAtPosition :: Int -> [a] -> [a]
 rotateAtPosition n [] = []
 rotateAtPosition 0 (x:xs) = xs ++ [x]
-rotateAtPosition n x = (lastChunk n x) ++ (firstChunk n x)
+rotateAtPosition n x
+    | (n >= 0)  = (lastChunk n x) ++ (firstChunk n x)
+    | otherwise = (lastChunk ((length x) - 1 + n) x) ++ (firstChunk ((length x) + n) x)
 
+-- 19
+
+removeAt :: Int -> [a] -> (a, [a])
+removeAt n [] = error "First argument is bigger than list size"
+removeAt 0 (x:xs) = (x, xs)
+removeAt n x = (getPosition n x, deleteAtPosition n x)
+
+deleteAtPosition :: Int -> [a] -> [a]
+deleteAtPosition n [] = []
+deleteAtPosition 0 (x:xs) = xs
+deleteAtPosition n (x:xs) = x : deleteAtPosition (n-1) xs
 
 -------- Lista 6 23/04 -----------
+
+-- 1
+
+sumTriples :: [(Int, Int, Int)] -> Int
+sumTriples [] = 0
+sumTriples ((a,b,c):xs) = a + b + c + sumTriples xs
+
+-- 2
+
+sumTupleOfTuples :: [((Int, Int), (Int, Int))] -> Int
+sumTupleOfTuples [] = 0
+sumTupleOfTuples (((a,b),(c,d)):xs) = a + b + c + d + sumTupleOfTuples xs
+
+-- 3
+
+zipp :: [a] -> [a] -> [(a, a)]
+zipp [] x = []
+zipp x [] = []
+zipp (x:xs) (y:ys) = (x, y) : zipp xs ys
+
+-- 4
+
+zipp3 :: [a] -> [a] -> [a] -> [(a, a, a)]
+zipp3 [] y z = []
+zipp3 x [] z = []
+zipp3 x y [] = []
+zipp3 (x:xs) (y:ys) (z:zs) = (x, y, z) : zipp3 xs ys zs
+
+-- 5
+
+unZipp :: [(a, a)] -> ([a], [a])
+unZipp [] = ([], [])
+unZipp x = (getListOfFirst x, getListOfLast x)
+    where
+        getListOfFirst [] = []
+        getListOfFirst (x:xs) = fst x : getListOfFirst xs
+        getListOfLast [] = []
+        getListOfLast (x:xs) = snd x : getListOfLast xs
 
 
