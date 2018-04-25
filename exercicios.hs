@@ -18,7 +18,7 @@ quantosSaoIguais :: Int -> Int -> Int -> Int
 quantosSaoIguais a b c
     | (a == b) && (b == c)                  = 3
     | (a == b) || (a == c) || (b == c)      = 2
-    | otherwise  = 0
+    | otherwise                             = 0
 
 
 todosDiferentes :: Int -> Int -> Int -> Bool
@@ -36,14 +36,14 @@ quadradoDoQuadrado a = quadrado (quadrado a)
 
 vendas :: Int -> Int
 vendas a
-    | (a == 0)    = 5
-    | (a == 1)    = 20
-    | (a == 2)    = 40
-    | (a == 3)    = 25
-    | (a == 4)    = 0
-    | (a == 5)    = 10
-    | (a == 6)    = 15
-    | (a == 7)    = 0
+    | (a == 0)  = 5
+    | (a == 1)  = 20
+    | (a == 2)  = 40
+    | (a == 3)  = 25
+    | (a == 4)  = 0
+    | (a == 5)  = 10
+    | (a == 6)  = 15
+    | (a == 7)  = 0
     | otherwise = 30
 
 vendasTotal :: Int -> Int
@@ -113,9 +113,9 @@ maiorVendaHipster m n
 
 maxVendaHipster :: Int -> Int -> Int
 maxVendaHipster m n
-    | (m == n)                      = n
-    | (vendas n == maiorVendaHipster m n)    = n
-    | otherwise                     = maxVendaHipster m (n-1)
+    | (m == n)                              = n
+    | (vendas n == maiorVendaHipster m n)   = n
+    | otherwise                             = maxVendaHipster m (n-1)
 
 zeroVendasHipster :: Int -> Int -> Int
 zeroVendasHipster m n
@@ -140,7 +140,7 @@ fatorial n = n * fatorial (n-1)
 fatorialHipster :: Int -> Int -> Int
 fatorialHipster m n
     | (m > n)   = error "Erro. Segundo parâmetro deve ser maior que o primeiro."
-    | (n <= 0)   = 1
+    | (n <= 0)  = 1
     | (m == n)  = n
     | otherwise = n * fatorialHipster m (n-1)
 
@@ -195,16 +195,16 @@ minEmax a b c = ((min a (min b c)), (max a (max b c)))
 
 ordenaTupla :: (Int, Int, Int) -> (Int, Int, Int)
 ordenaTupla (a, b, c)
-    | (a <= b && b <= c) = (a, b, c)
-    | (a > b) = ordenaTupla (b, a, c)
-    | (b > c) = ordenaTupla (a, c, b)
+    | (a <= b && b <= c)    = (a, b, c)
+    | (a > b)               = ordenaTupla (b, a, c)
+    | (b > c)               = ordenaTupla (a, c, b)
 
 -- 5
 
 isZeroVendas :: Int -> (Int, Bool)
 isZeroVendas n
-    | (vendas n == 0) = (vendas n, True)
-    | otherwise = (vendas n, False)
+    | (vendas n == 0)   = (vendas n, True)
+    | otherwise         = (vendas n, False)
 
 
 -- 6
@@ -348,7 +348,7 @@ dropDuplicates :: [Int] -> [Int]
 dropDuplicates [] = []
 dropDuplicates (x:xs) = if (existsNum x xs > 0) then (dropDuplicates (dropElement x xs)) else (x : dropDuplicates xs)
 
-dropElement :: Int -> [Int] -> [Int]
+dropElement :: Eq a => a -> [a] -> [a]
 dropElement n [] = []
 dropElement n (x:xs) = if (n == x) then (dropElement n xs) else (x : dropElement n xs)
 
@@ -423,4 +423,102 @@ intercala :: [a] -> [a] -> [a]
 intercala x [] = x
 intercala [] x = x
 intercala (x:xs) (y:ys) = x : y : intercala xs ys
+
+-- 10
+
+compress :: Eq a =>  [a] -> [a]
+compress [] = []
+compress (x:xs) = x : compress (removeElementFromBeggining x xs)
+    where
+        removeElementFromBeggining n [] = []
+        removeElementFromBeggining n (x:xs)
+            | (n==x)    = removeElementFromBeggining n xs
+            | otherwise = (x:xs)
+
+-- 11
+
+pack :: Eq a => [a] -> [[a]]
+pack [] = []
+pack (x:xs) = ([x] ++ (getEqualsNext x xs)) : pack (removeFromBeggining x xs)
+    where
+        getEqualsNext n [] = []
+        getEqualsNext n (x:xs)
+            | (n == x)  = x : getEqualsNext n xs
+            | otherwise = []
+        removeFromBeggining n [] = []
+        removeFromBeggining n (x:xs)
+            | (n == x)    = removeFromBeggining n xs
+            | otherwise = (x:xs)
+
+-- 12
+
+encode :: Eq a => [a] -> [(a, Integer)]
+encode [] = []
+encode (x:xs) = (x, (countFromBeggining x (x:xs))) : (encode (dropElement x xs))
+    where
+        countFromBeggining n []     = 0
+        countFromBeggining n (x:xs)
+            | (n == x)  = 1 + (countFromBeggining n xs)
+            | otherwise = 0
+
+
+-- 13
+
+duplicate :: [a] -> [a]
+duplicate [] = []
+duplicate (x:xs) = x : x : duplicate xs
+
+
+-- 14
+
+replicateElements :: Int -> [a] -> [a]
+replicateElements n [] = []
+replicateElements 0 x = []
+replicateElements n (x:xs) = (repeatElement n x) ++ (replicateElements n xs)
+
+repeatElement :: Int -> a -> [a]
+repeatElement 0 x = []
+repeatElement n x = [x] ++ repeatElement (n-1) x
+
+-- 15
+
+dropElementAtPosition :: Int -> [a] -> [a]
+dropElementAtPosition n [] = []
+dropElementAtPosition 0 (x:xs) = xs
+dropElementAtPosition n (x:xs) = x : dropElementAtPosition (n-1) xs
+
+-- 16
+
+splitAtPosition :: Int -> [a] -> ([a], [a])
+splitAtPosition n [] = ([], [])
+splitAtPosition n x = (firstChunk n x, lastChunk n x)
+
+firstChunk :: Int -> [a] -> [a]
+firstChunk n [] = []
+firstChunk 0 (x:xs) = [x]
+firstChunk n (x:xs) = [x] ++ firstChunk (n-1) xs
+
+lastChunk :: Int -> [a] -> [a]
+lastChunk n [] = []
+lastChunk 0 (x:xs) = xs
+lastChunk n (x:xs) = lastChunk (n-1) xs
+
+-- 17
+
+slice :: Int -> Int -> [a] -> [a]
+slice n m [] = []
+slice 0 0 (x:xs) = [x]
+slice 0 m (x:xs) = x : (slice 0 (m-1) xs)
+slice n m (x:xs) = slice (n-1) (m-1) xs
+
+-- 18 -- Falta pra n < 0
+
+rotateAtPosition :: Int -> [a] -> [a]
+rotateAtPosition n [] = []
+rotateAtPosition 0 (x:xs) = xs ++ [x]
+rotateAtPosition n x = (lastChunk n x) ++ (firstChunk n x)
+
+
+-------- Lista 6 23/04 -----------
+
 
