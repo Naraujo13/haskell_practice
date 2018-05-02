@@ -573,3 +573,35 @@ unZipp x = (getListOfFirst x, getListOfLast x)
         getListOfLast (x:xs) = snd x : getListOfLast xs
 
 
+
+-- List 7 - Aula 02/05/18
+
+times2 n = 2*n
+times3 n = 3*n
+
+mapInt :: (Int -> Int) -> [Int] -> [Int]
+mapInt f [] = []
+mapInt f (x:xs) = f x : mapInt f xs
+
+
+-- 1
+
+total :: (Int -> Int) -> Int -> Int
+total f 0 = f 0
+total f n = f n + total f (n-1)
+
+-- 2
+
+foldInt :: (Int -> Int -> Int) -> [Int] -> Int
+foldInt f [] = error "Empty List"
+foldInt f x = foldHipster f (reverse x)
+    where
+        foldHipster f [] = error "Empty List"
+        foldHipster f [x] = x
+        foldHipster f (x:xs) = f (foldHipster f xs) x
+
+soma x y = (x + y)
+subtracao x y = (x - y)
+multiplicacao x y = (x * y)
+
+
