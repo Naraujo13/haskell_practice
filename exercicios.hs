@@ -1,38 +1,53 @@
-maiorDeIdade :: Int -> Bool
+
+-------------- Lista 1 --------------
+
+--- 1
+
+maiorDeIdade :: Num a =>  Ord a => a -> Bool
 maiorDeIdade a = (a >= 18)
 
-quadrado :: Int -> Int
+--- 2
+
+quadrado :: Num a => a -> a
 quadrado x = x * x
 
-mini ::Int -> Int -> Int -- Função que retornao menor valor
+mini :: Ord a => a -> a -> a
 mini a b
     | a <= b    = a
     | otherwise = b
 
-todosIguais :: Int -> Int -> Int -> Bool
+--- 3
+
+todosIguais :: Eq a => a -> a -> a -> Bool
 todosIguais a b c = (a == b) && (b == c)
 
+--- 4
 
-
-quantosSaoIguais :: Int -> Int -> Int -> Int
+quantosSaoIguais :: Eq a => a -> a -> a -> Int
 quantosSaoIguais a b c
     | (a == b) && (b == c)                  = 3
     | (a == b) || (a == c) || (b == c)      = 2
     | otherwise                             = 0
 
+--- 5
 
-todosDiferentes :: Int -> Int -> Int -> Bool
+todosDiferentes :: Eq a => a -> a -> a -> Bool
 todosDiferentes a b c = (a /= b) && (a /= c) && (b /= c)
 
-quantosSaoIguaisHipster :: Int -> Int -> Int -> Int
+--- 6
+
+quantosSaoIguaisHipster :: Eq a => a -> a -> a -> Int
 quantosSaoIguaisHipster a b c
     | todosIguais a b c     = 3
     | todosDiferentes a b c = 0
     | otherwise             = 2
 
+--- 7
 
-quadradoDoQuadrado :: Int -> Int
+quadradoDoQuadrado :: Num a => a -> a
 quadradoDoQuadrado a = quadrado (quadrado a)
+
+--- 8
 
 vendas :: Int -> Int
 vendas a
@@ -46,9 +61,13 @@ vendas a
     | (a == 7)  = 0
     | otherwise = 30
 
+--- 9
+
 vendasTotal :: Int -> Int
 vendasTotal 0 = vendas 0
 vendasTotal a = vendas a + vendasTotal (a-1)
+
+--- 10
 
 divisao :: Float -> Float -> Float
 divisao a b = a / b
@@ -599,6 +618,7 @@ foldInt f x = foldHipster f (reverse x)
         foldHipster f [] = error "Empty List"
         foldHipster f [x] = x
         foldHipster f (x:xs) = f (foldHipster f xs) x
+
 
 soma x y = (x + y)
 subtracao x y = (x - y)
