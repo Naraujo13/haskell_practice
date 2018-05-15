@@ -24,7 +24,11 @@ justificaLinhas (x:xs) n = (justificaLinha x n) ++ "\n" ++ (justificaLinhas xs n
 --- Linha -> Tamanho Alvo -> Linha Justificada ---
 justificaLinha :: String -> Int -> String
 justificaLinha [] n = []
-justificaLinha x n = insereEspacos (fst(numeroEspacosPorPalavra x ( n - (length x)))) x
+justificaLinha x n =
+  let
+    espacos = numeroEspacosPorPalavra x ( n - (length x))
+  in
+    putEspacos (insereEspacos (fst(espacos)) x) (snd(espacos))
 
 --- Separa o texto por linhas ---
 separaLinhas :: String -> [String]
