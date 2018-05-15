@@ -4,7 +4,7 @@
 ----- Justificar um texto segundo maior linha -----
 ---------- Última linha não justifica -------------
 
-texto_exemplo = "RUBIÃO fitava a enseada -- eram oito horas da manhã.\nQuem o visse com os polegares metidos no cordão do chambre à janela de uma\ngrande casa de Botafogo cuidaria que ele admirava aquele pedaço de água\nquieta mas em verdade vos digo que pensava em outra coisa.\nCotejava o passado com o presente. Que era há um ano?\nProfessor. Que é agora? Capitalista! Olha para si para as chinelas\n(umas chinelas de Túnis que lhe deu recente amigo Cristiano Palha) para a casa\npara o jardim para a enseada para os morros e para o céu e tudo desde as chinelas\naté o céu tudo entra na mesma sensação de propriedade.\n"
+texto_exemplo = "RUBIÃO fitava a enseada -- eram oito horas da manhã.\nQuem o visse com os polegares metidos no cordão do chambre à janela de uma\ngrande casa de Botafogo cuidaria que ele admirava aquele pedaço de água\nquieta mas em verdade vos digo que pensava em outra coisa.\nCotejava o passado com o presente. Que era há um ano?\nProfessor. Que é agora? Capitalista! Olha para si para as chinelas\n(umas chinelas de Túnis que lhe deu recente amigo Cristiano Palha) para a casa\npara o jardim para a enseada para os morros e para o céu e tudo desde as chinelas\naté o céu tudo entra na mesma sensação de propriedade."
 
 justifica :: String -> String
 justifica [] = []
@@ -33,7 +33,14 @@ justificaLinha x n =
 --- Separa o texto por linhas ---
 separaLinhas :: String -> [String]
 separaLinhas [] = []
-separaLinhas x = (takeWhile (/='\n') x) : separaLinhas (tail (dropWhile (/='\n') x))
+separaLinhas x =
+  let
+    y = (dropWhile (/='\n') x)
+    separa
+      | y /= []   = (takeWhile (/='\n') x) : separaLinhas (tail y)
+      | otherwise = (takeWhile (/='\n') x) : []
+  in
+    separa
 
 --- Retorna o tamanho da maior linha ---
 tamanhoMaiorLinha :: [String]-> Int
