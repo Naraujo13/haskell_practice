@@ -282,7 +282,7 @@ andLista [a] = True && a
 andLista (a : x) = a && andLista x
 
 -- 5
-concatLista :: [[Int]] ->[Int]
+concatLista :: [[a]] ->[a]
 concatLista [] = []
 concatLista ([]:xss) = concatLista xss
 concatLista ((x:xs):xss) = x : concatLista (xs:xss)
@@ -625,3 +625,124 @@ subtracao x y = (x - y)
 multiplicacao x y = (x * y)
 
 
+--- Lista 8 - tipos polimorficos, como fiz em boa parte dos anteriores, pulei
+
+--- Lista 9 - Fold e Map, reimplementação de vários exercícios com fold e map
+
+-- 1
+
+concatenaF :: [[a]] -> [a]
+concatenaF [] = []
+concatenaF (x:xs) = foldl (++) x xs
+
+-- 2
+
+andF :: [Bool] -> Bool
+andF [] = True
+andF (x:xs) = foldl (&&) x xs
+
+
+--- Lista de Aula de Semântica -Tipos Abstratos
+
+
+-- Exemplo 1
+
+data Temperatura = Frio|Calor
+    deriving(Eq, Show)
+
+data Estacao = Verao|Outono|Inverno|Primavera
+
+tempo :: Estacao -> Temperatura
+tempo Verao = Calor
+tempo _     = Frio
+
+
+-- Exemplo 2
+
+-- Exemplo 3
+data Forma = Circulo Float | Retangulo Float Float
+    deriving(Eq, Show)
+
+redondo :: Forma -> Bool
+redondo (Circulo x) = True
+redondo _           = False
+
+area :: Forma -> Float
+area (Circulo x)        = pi * x * x
+area (Retangulo b h)    = b * h
+
+-- Exemplo 4
+data Arvore = Folha | Nodo Int Arvore Arvore
+    deriving(Eq, Show)
+
+minhaArvore :: Arvore
+minhaArvore = Nodo 10 (Nodo 14 (Nodo 1 Folha Folha) Folha) Folha
+
+somaArvore :: Arvore -> Int
+somaArvore Folha = 0
+somaArvore (Nodo v n1 n2) = v + somaArvore n1 + somaArvore n2
+
+
+--- Lista 5 (Semântica) - Tipos Abstratos
+
+-- 1
+
+dobraArvore :: Arvore -> Arvore
+dobraArvore Folha = Folha
+dobraArvore (Nodo v n1 n2) = Nodo (v*2) (dobraArvore n1) (dobraArvore n2)
+
+-- 2
+
+maxArvore :: Arvore -> Int
+maxArvore Folha = 0
+maxArvore (Nodo v n1 n2) = max v (max (maxArvore n1) (maxArvore n2))
+
+-- 3
+
+existsArvore :: Int -> Arvore -> Bool
+existsArvore _ Folha = False
+existsArvore n (Nodo v n1 n2) = (n == v) || (existsArvore n n1) || (existsArvore n n2)
+
+-- 4 - Cópia da 2
+
+-- 5
+
+countArvore :: Int -> Arvore -> Int
+countArvore _ Folha = 0
+countArvore n (Nodo v n1 n2)
+    | (n == v)  = 1 + (countArvore n n1) + (countArvore n n2)
+    |otherwise  = (countArvore n n1) + (countArvore n n2)
+
+-- 6
+
+refleteArvore :: Arvore -> Arvore
+refleteArvore Folha = Folha
+refleteArvore (Nodo v n1 n2) = Nodo v (refleteArvore n2) (refleteArvore n1)
+
+-- 7
+
+arvoreToList :: Arvore -> [Int]
+arvoreToList Folha = []
+arvoreToList (Nodo v n1 n2) = [v] ++ (arvoreToList n1) ++ (arvoreToList n2)
+
+-- 8
+
+mapTree :: (Int -> Int) -> Arvore -> Arvore
+mapTree _ Folha = Folha
+mapTree f (Nodo v n1 n2) = Nodo (f v) (mapTree f n1) (mapTree f n2)
+
+-- 9
+
+data Lista = Fim | Elemento Int Lista
+    deriving(Eq, Show)
+
+minhaLista :: Lista
+minhaLista = Elemento 1 (Elemento 2 (Elemento 3 Fim))
+
+tamanhoLista :: Lista -> Int
+tamanhoLista Fim = 0
+tamanhoLista (Elemento x p) = 1 + tamanhoLista p
+
+mapLista :: (Int -> Int) -> Lista -> Lista
+mapLista _ Fim = Fim
+mapLista f (Elemento x p) = Elemento (f x) (mapLista f p)
