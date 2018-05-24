@@ -733,16 +733,20 @@ mapTree f (Nodo v n1 n2) = Nodo (f v) (mapTree f n1) (mapTree f n2)
 
 -- 9
 
-data Lista = Fim | Elemento Int Lista
+data Lista a = Fim | Elemento a (Lista a)
     deriving(Eq, Show)
 
-minhaLista :: Lista
+minhaLista :: Lista Int
 minhaLista = Elemento 1 (Elemento 2 (Elemento 3 Fim))
 
-tamanhoLista :: Lista -> Int
+minhaListaBool :: Lista Bool
+minhaListaBool = Elemento True (Elemento False (Elemento True Fim))
+
+tamanhoLista :: (Lista a) -> Int
 tamanhoLista Fim = 0
 tamanhoLista (Elemento x p) = 1 + tamanhoLista p
 
-mapLista :: (Int -> Int) -> Lista -> Lista
+mapLista :: (a -> a) -> (Lista a) -> (Lista a)
 mapLista _ Fim = Fim
 mapLista f (Elemento x p) = Elemento (f x) (mapLista f p)
+
