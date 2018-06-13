@@ -642,7 +642,7 @@ andF [] = True
 andF (x:xs) = foldl (&&) x xs
 
 
---- Lista de Aula de Semântica -Tipos Abstratos
+--- Lista de Aula de Semântica - Tipos Algébricos
 
 
 -- Exemplo 1
@@ -683,7 +683,7 @@ somaArvore Folha = 0
 somaArvore (Nodo v n1 n2) = v + somaArvore n1 + somaArvore n2
 
 
---- Lista 5 (Semântica) - Tipos Abstratos
+--- Lista 5 (Semântica) - Tipos Algébricos
 
 -- 1
 
@@ -750,3 +750,91 @@ mapLista :: (a -> a) -> (Lista a) -> (Lista a)
 mapLista _ Fim = Fim
 mapLista f (Elemento x p) = Elemento (f x) (mapLista f p)
 
+
+---- Exercícios 10 - Tipos Algébricos Simples
+
+-- 1
+type Titulo = String
+type Artista = String
+type Diretor = String
+type Ano = Int
+
+data ItemLocadora = CD Titulo Artista Ano | DVD Titulo  Diretor Ano
+    deriving(Eq, Show)
+
+getTitulo :: ItemLocadora -> String
+getTitulo (CD t a y) = t
+getTitulo (DVD t d y) = t
+
+getArtista :: ItemLocadora -> String
+getArtista (CD t a y) = a
+getArtista _ = error "DVD não tem artista"
+
+getDiretor :: ItemLocadora -> String
+getDiretor (DVD t d y) = d
+getDiretor _ = error "CD não possui diretor"
+
+getAno :: ItemLocadora -> Int
+getAno (CD t a y) = y
+getAno (DVD t d y) = y
+
+meuCD :: ItemLocadora
+meuCD = CD "American Idiot" "Green Day" 2004
+
+meuDVD :: ItemLocadora
+meuDVD = DVD "Laranja Mecânica" "Esqueci o Nome" 1980
+
+-- 2
+
+type Nome = String
+type Idade = Int
+type CPF = String
+
+data Socio = Pessoa Nome Idade CPF
+    deriving(Eq, Show)
+
+meuSocio :: Socio
+meuSocio = Pessoa "Nícolas de Araujo" 21 "033.690.370-76"
+
+meuSocio2 :: Socio
+meuSocio2 = Pessoa "Eduarda Rosa" 24 "111.111.111-11"
+
+
+-- 3
+
+data ItensDisponiveis = Acervo [ItemLocadora]
+    deriving(Eq, Show)
+
+meuAcervo :: ItensDisponiveis
+meuAcervo = Acervo (meuCD : meuDVD : [])
+
+-- 4
+
+data ItemAlugado = Aluguel ItemLocadora Socio
+    deriving(Eq, Show)
+
+meuAluguel1 :: ItemAlugado
+meuAluguel1 = meuCD `Aluguel` meuSocio
+meuAluguel2 :: ItemAlugado
+meuAluguel2 = meuDVD `Aluguel` meuSocio2
+
+-- 5
+data ItensIndisponiveis = Indisponiveis [ItemAlugado]
+    deriving(Eq, Show)
+
+meuAcervoAlugado :: ItensIndisponiveis
+meuAcervoAlugado = Indisponiveis (meuAluguel1 : meuAluguel2 : [])
+
+-- 6
+alugaItem :: Socio -> ItemLocadora -> ItemAlugado
+alugaItem s i = i `Aluguel` s
+
+-- 7
+adicionaIndisponivel :: ItemAlugado -> ItensIndisponiveis -> ItensIndisponiveis
+adicionaIndisponivel i (Indisponiveis x) = Indisponiveis (i:x)
+
+alugadosPara :: ItensIndisponiveis -> Socio -> ItensIndisponiveis
+alugadosPara (Indisponiveis []) s2 = Indisponiveis []
+alugadosPara (Indisponiveis ((Aluguel i s1):xs)) s2
+    | (s1 == s2)    = adicionaIndisponivel (Aluguel i s1) (alugadosPara (Indisponiveis xs) s2)
+    | otherwise     = alugadosPara (Indisponiveis xs) s2
