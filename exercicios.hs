@@ -847,7 +847,7 @@ data Narvore a = FolhaN | NodoN a [Narvore a]
     deriving(Eq, Show)
 
 minhaNarvore :: Narvore Int
-minhaNarvore = NodoN 1 [(NodoN 2 [(NodoN 5 [FolhaN, FolhaN]), FolhaN]), (NodoN 3 [FolhaN]), (NodoN 4 [FolhaN])]
+minhaNarvore = NodoN 1 [(NodoN 2 [(NodoN 5 [FolhaN, FolhaN]), FolhaN]), (NodoN 2 [FolhaN]), (NodoN 4 [FolhaN])]
 
 
 -- 1
@@ -864,35 +864,41 @@ getNarvoreValue (NodoN v x) = v
 
 maxNarvore :: Narvore Int -> Int
 maxNarvore FolhaN = 0
-maxNarvore (NodoN v x) = max v (foldl (max) (map (getNarvoreValue) x))
+maxNarvore (NodoN v x) = (foldl (max) v (map (maxNarvore) x))
 
 -- -- 3
 
--- existsArvore :: Int -> Arvore -> Bool
--- existsArvore _ Folha = False
--- existsArvore n (Nodo v n1 n2) = (n == v) || (existsArvore n n1) || (existsArvore n n2)
+existsNarvore :: Int -> Narvore Int -> Bool
+existsNarvore _ FolhaN = False
+existsNarvore n (NodoN v x) = foldl (||) (n==v) (map (existsNarvore n) x)
 
 -- -- 4 - Cópia da 2
 
 -- -- 5
 
--- countArvore :: Int -> Arvore -> Int
--- countArvore _ Folha = 0
--- countArvore n (Nodo v n1 n2)
---     | (n == v)  = 1 + (countArvore n n1) + (countArvore n n2)
---     |otherwise  = (countArvore n n1) + (countArvore n n2)
+countNarvore :: Int -> Narvore Int -> Int
+countNarvore _ FolhaN = 0
+countNarvore n (NodoN v x)
+    | (n == v)  = foldl (+) 1 (map (countNarvore n) x)
+    | otherwise = foldl (+) 0 (map (countNarvore n) x)
 
 -- -- 6
 
--- refleteArvore :: Arvore -> Arvore
--- refleteArvore Folha = Folha
--- refleteArvore (Nodo v n1 n2) = Nodo v (refleteArvore n2) (refleteArvore n1)
+refleteNarvore :: Narvore Int -> Narvore Int
+refleteNarvore FolhaN = FolhaN
+refleteNarvore (NodoN v x) =  NodoN v (map (refleteNarvore) (reverse x))
+
+-- -- 6.5
+
+alturaNarvore :: Narvore Int -> Int
+alturaNarvore FolhaN = 0
+alturaNarvore (NodoN v x) = 1 + (foldl (max) 0 (map (alturaNarvore) x))
 
 -- -- 7
 
--- arvoreToList :: Arvore -> [Int]
--- arvoreToList Folha = []
--- arvoreToList (Nodo v n1 n2) = [v] ++ (arvoreToList n1) ++ (arvoreToList n2)
+-- narvoreToList :: Arvore -> [Int]
+-- narvoreToList Folha = []
+-- narvoreToList (Nodo v n1 n2) = [v] ++ (arvoreToList n1) ++ (arvoreToList n2)
 
 -- -- 8
 
