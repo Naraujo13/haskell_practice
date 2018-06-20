@@ -838,3 +838,85 @@ alugadosPara (Indisponiveis []) s2 = Indisponiveis []
 alugadosPara (Indisponiveis ((Aluguel i s1):xs)) s2
     | (s1 == s2)    = adicionaIndisponivel (Aluguel i s1) (alugadosPara (Indisponiveis xs) s2)
     | otherwise     = alugadosPara (Indisponiveis xs) s2
+
+
+--- Lista 11 - Repetição da lista de semântica, porém com uma árvore não binária
+
+
+data Narvore a = FolhaN | NodoN a [Narvore a]
+    deriving(Eq, Show)
+
+minhaNarvore :: Narvore Int
+minhaNarvore = NodoN 1 [(NodoN 2 [(NodoN 5 [FolhaN, FolhaN]), FolhaN]), (NodoN 3 [FolhaN]), (NodoN 4 [FolhaN])]
+
+
+-- 1
+
+dobraNarvore :: Num a => Narvore a -> Narvore a
+dobraNarvore FolhaN = FolhaN
+dobraNarvore (NodoN v x) = NodoN (2*v) (map (dobraNarvore) x)
+
+-- -- 2
+
+getNarvoreValue :: Narvore Int -> Int
+getNarvoreValue FolhaN = 0
+getNarvoreValue (NodoN v x) = v
+
+maxNarvore :: Narvore Int -> Int
+maxNarvore FolhaN = 0
+maxNarvore (NodoN v x) = max v (foldl (max) (map (getNarvoreValue) x))
+
+-- -- 3
+
+-- existsArvore :: Int -> Arvore -> Bool
+-- existsArvore _ Folha = False
+-- existsArvore n (Nodo v n1 n2) = (n == v) || (existsArvore n n1) || (existsArvore n n2)
+
+-- -- 4 - Cópia da 2
+
+-- -- 5
+
+-- countArvore :: Int -> Arvore -> Int
+-- countArvore _ Folha = 0
+-- countArvore n (Nodo v n1 n2)
+--     | (n == v)  = 1 + (countArvore n n1) + (countArvore n n2)
+--     |otherwise  = (countArvore n n1) + (countArvore n n2)
+
+-- -- 6
+
+-- refleteArvore :: Arvore -> Arvore
+-- refleteArvore Folha = Folha
+-- refleteArvore (Nodo v n1 n2) = Nodo v (refleteArvore n2) (refleteArvore n1)
+
+-- -- 7
+
+-- arvoreToList :: Arvore -> [Int]
+-- arvoreToList Folha = []
+-- arvoreToList (Nodo v n1 n2) = [v] ++ (arvoreToList n1) ++ (arvoreToList n2)
+
+-- -- 8
+
+-- mapTree :: (Int -> Int) -> Arvore -> Arvore
+-- mapTree _ Folha = Folha
+-- mapTree f (Nodo v n1 n2) = Nodo (f v) (mapTree f n1) (mapTree f n2)
+
+-- -- 9
+
+-- data Lista a = Fim | Elemento a (Lista a)
+--     deriving(Eq, Show)
+
+-- minhaLista :: Lista Int
+-- minhaLista = Elemento 1 (Elemento 2 (Elemento 3 Fim))
+
+-- minhaListaBool :: Lista Bool
+-- minhaListaBool = Elemento True (Elemento False (Elemento True Fim))
+
+-- tamanhoLista :: (Lista a) -> Int
+-- tamanhoLista Fim = 0
+-- tamanhoLista (Elemento x p) = 1 + tamanhoLista p
+
+-- mapLista :: (a -> a) -> (Lista a) -> (Lista a)
+-- mapLista _ Fim = Fim
+-- mapLista f (Elemento x p) = Elemento (f x) (mapLista f p)
+
+
