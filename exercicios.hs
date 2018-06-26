@@ -739,6 +739,9 @@ data Lista a = Fim | Elemento a (Lista a)
 minhaLista :: Lista Int
 minhaLista = Elemento 1 (Elemento 2 (Elemento 3 Fim))
 
+minhaLista2 :: Lista Int
+minhaLista2 = Elemento 4 (Elemento 5 (Elemento 6 Fim))
+
 minhaListaBool :: Lista Bool
 minhaListaBool = Elemento True (Elemento False (Elemento True Fim))
 
@@ -750,6 +753,27 @@ mapLista :: (a -> a) -> (Lista a) -> (Lista a)
 mapLista _ Fim = Fim
 mapLista f (Elemento x p) = Elemento (f x) (mapLista f p)
 
+-- needs review
+foldrLista :: (a -> b -> b) -> b -> (Lista a) -> b 
+foldrLista _ i Fim = i
+foldrLista f i (Elemento v x) = f v (foldrLista f i x)
+
+
+foldlLista :: (b -> a -> b) -> b -> (Lista a) -> b 
+foldlLista _ i Fim = i
+foldlLista f i (Elemento v x) = foldlLista f (f i v) x
+
+filterLista :: (a -> Bool) -> (Lista a) -> (Lista a)
+filterLista _ Fim = Fim
+filterLista f (Elemento v x)
+    | (f v)      = Elemento v (filterLista f x)
+    | otherwise  = filterLista f x
+
+
+concatenaLista :: (Lista a) -> (Lista a) -> (Lista a)
+concatenaLista x Fim = x
+concatenaLista Fim y = y
+concatenaLista (Elemento v1 x) y = Elemento v1 (concatenaLista x y)
 
 ---- Exercícios 10 - Tipos Algébricos Simples
 

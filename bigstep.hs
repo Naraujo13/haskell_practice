@@ -63,7 +63,15 @@ bbigStep (Or e1 e2, s) =
 
 cbigStep :: (CExp,Estado) -> (CExp,Estado)
 cbigStep (Skip,s) = (Skip,s)
--- cbigStep (If b c1 c2,s)  
+cbigStep (If b c1 c2,s) = 
+    case bbigStep (b,s) of
+        (True, _) -> cbigStep (c1, s)
+        (False, _) -> cbigStep (c2, s)
+-- cbigStep (At c1 c2,s) = 
+--     case bbigStep (b,s) of
+--         (True, _) -> cbigStep (c1, s)
+--         (False, _) -> cbigStep (c2, s)
+    
 --cbigStep (Seq c1 c2,s)  = 
 --cbigStep (Atrib (Var x) e,s) = 
 --cbigStep (While b c, s) =
