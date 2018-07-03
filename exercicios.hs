@@ -950,3 +950,44 @@ alturaNarvore (NodoN v x) = 1 + (foldl (max) 0 (map (alturaNarvore) x))
 -- mapLista f (Elemento x p) = Elemento (f x) (mapLista f p)
 
 
+
+--- Lista 13 - List Comprehensions
+ 
+simple_map = [ 2 * x | x <- [1..4] ]
+two_tests = [ 2 * n | n <- [1..4], mod n 2 == 0, n>3]
+
+
+-- 1
+
+filterHipster :: (a -> Bool) -> [a] -> [a]
+filterHipster f x = [n | n <- x, (f n)]
+
+-- 2
+
+mapHipster :: (a -> b) -> [a] -> [b]
+mapHipster f x = [ f n | n <- x ]
+
+-- 3
+
+removeEspacos :: String -> String
+removeEspacos x = filterHipster (/=' ') x
+
+-- 4
+
+sings :: [[a]] -> [a]
+sings x = [ head n | n <- x, (length n) == 1 ]
+
+-- 5
+
+matches :: Eq a => a -> [a] -> [a]
+matches v x = [ n | n <- x, (v == n) ]
+
+-- 6
+
+elemento :: Eq a => a -> [a] -> Bool
+elemento v x = (length (matches v x) > 0)
+
+-- 7
+
+divisores :: Int -> [Int]
+divisores n = [ x | x <- [1..(n `div` 2)] ++ [n], mod n x == 0]
