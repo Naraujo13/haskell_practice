@@ -53,26 +53,34 @@ bbigStep (Ig e1 e2, s) =
         (n2, s2) = abigStep (e2, s)
     in (n1==n2, s)
 bbigStep (And e1 e2, s) =
-    let (n1, s1) = bbigStep (e1, s)
-        (n2, s2) = bbigStep (e2, s)
-    in (n1 && n2, s)
+    case bbigStep (e1, s) of
+        (True, _) -> bbigStep (e2, s)
+        (False, _) ->  (False, s)
 bbigStep (Or e1 e2, s) =
-    let (n1, s1) = bbigStep (e1, s)
-        (n2, s2) = bbigStep (e2, s)
-    in (n1 || n2, s)
+    case bbigStep (e1, s) of
+        (True, _) -> (True, s)
+        (False, _) ->  bbigStep (e2, s)
 
+
+-- IF
 cbigStep :: (CExp,Estado) -> (CExp,Estado)
 cbigStep (Skip,s) = (Skip,s)
 cbigStep (If b c1 c2,s) = 
     case bbigStep (b,s) of
         (True, _) -> cbigStep (c1, s)
         (False, _) -> cbigStep (c2, s)
--- cbigStep (At c1 c2,s) = 
---     case bbigStep (b,s) of
---         (True, _) -> cbigStep (c1, s)
---         (False, _) -> cbigStep (c2, s)
-    
---cbigStep (Seq c1 c2,s)  = 
+
+-- Atrib        
+cbigStep (Atrib (Var x) e,s) = 
+    let (n, s1) = abigStep (e, s)
+    in (Skip, (mudaVar s x n))
+
+-- Seq
+cbigStep (Seq c1 c2,s)  = 
+    case cbigStep (c1, s) of
+        (Skip, s1) -> cbigStep (c2, s1)
+        (c3, s1) -> cbigStep (c3, s1) 
+
 --cbigStep (Atrib (Var x) e,s) = 
 --cbigStep (While b c, s) =
 
@@ -84,8 +92,8 @@ meuEstado = [("x",3), ("y",0), ("z",0)]
 exemplo :: AExp
 exemplo = Mul (Num 3) (Sub (Var "x") (Var "y"))
 
---teste1 :: BExp
---teste1 = (Ig (Som (Num 3) (Num 3))  (Mul (Num 2) (Num 3)))
+teste1 :: BExp
+teste1 = (Or (And (Ig (Som (Num 3) (Num 3))  (Mul (Num 2) (Num 3))) FALSE) TRUE)
 --teste2 :: BExp
 --teste2 = (Ig (Som (Var "x") (Num 3))  (Mul (Num 2) (Num 3)))
 
