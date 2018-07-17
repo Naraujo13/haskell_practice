@@ -991,3 +991,14 @@ elemento v x = (length (matches v x) > 0)
 
 divisores :: Int -> [Int]
 divisores n = [ x | x <- [1..(n `div` 2)] ++ [n], mod n x == 0]
+
+--- Classes e Polimorfismo
+
+data Tupla a b = T2 a b
+showTupla :: (Show a, Show b) => Tupla a b -> String
+showTupla (T2 a b) = "(" ++ show a ++ "," ++ show b ++ ")"
+
+
+instance (Show a, Show b) => Show (Tupla a b) where
+    show = showTupla
+

@@ -20,9 +20,13 @@ data CExp = While BExp CExp
   | If BExp CExp CExp
   | Seq CExp CExp
   | Atrib AExp AExp
+  | Multiatrib AExp AExp AExp AExp
+  | Repeat CExp BExp
+  | Do CExp BExp
+  | For AExp AExp CExp
+  | Swap AExp AExp
   | Skip
   deriving(Show)                
-
 
 
 abigStep :: (AExp,Estado) -> (Int,Estado)
@@ -75,14 +79,53 @@ cbigStep (Atrib (Var x) e,s) =
     let (n, s1) = abigStep (e, s)
     in (Skip, (mudaVar s x n))
 
+-- MultiAtrib
+cbigStep (Multiatrib (Var x) (Var y) e1 e2, s) = 
+    let 
+        (n1, _) = abigStep (e1, s)
+        (n2, _) = abigStep (e2, s)
+    in (Skip, mudaVar (mudaVar s x n1) y n2)
+
+
 -- Seq
 cbigStep (Seq c1 c2,s)  = 
     case cbigStep (c1, s) of
         (Skip, s1) -> cbigStep (c2, s1)
         (c3, s1) -> cbigStep (c3, s1) 
 
---cbigStep (Atrib (Var x) e,s) = 
---cbigStep (While b c, s) =
+-- While
+cbigStep (While b c, s) = 
+    case bbigStep (b, s) of
+        (True, _) -> cbigStep(Seq c (While b c), s)
+        (False, _) -> cbigStep(Skip, s)
+
+-- Repeat Until
+cbigStep (Repeat c b, s) =
+    case bbigStep (b, s) of
+        (True, _) -> cbigStep(Skip, s)
+        (False, _) -> cbigStep(Seq c (Repeat c b), s)
+
+
+-- Do While
+cbigStep (Do c b, s) =
+    case bbigStep (b, s) of
+        (True, _) -> cbigStep(Seq c (Do c b), s)
+        (False, _) -> cbigStep(Skip, s)  
+
+
+-- For
+cbigStep (For current end c, s) =
+    case (fst(abigStep(current, s)) == fst(abigStep(end, s))) of
+        (True) -> cbigStep(Skip, s)
+        (False) -> cbigStep(Seq c (For (Som current (Num 1)) end c), s)
+
+
+-- Swap
+cbigStep (Swap (Var x) (Var y), s) = 
+    let 
+        xv = (procuraVar s x)
+        yv = (procuraVar s y)
+    in (Skip,  mudaVar (mudaVar s x yv) y xv)
 
 
 meuEstado :: Estado
