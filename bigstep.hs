@@ -23,7 +23,7 @@ data CExp = While BExp CExp
   | Multiatrib AExp AExp AExp AExp
   | Repeat CExp BExp
   | Do CExp BExp
-  | For AExp AExp CExp
+  | For AExp AExp AExp CExp
   | Swap AExp AExp
   | Skip
   deriving(Show)                
@@ -114,10 +114,10 @@ cbigStep (Do c b, s) =
 
 
 -- For
-cbigStep (For current end c, s) =
-    case (fst(abigStep(current, s)) == fst(abigStep(end, s))) of
-        (True) -> cbigStep(Skip, s)
-        (False) -> cbigStep(Seq c (For (Som current (Num 1)) end c), s)
+cbigStep (For v current end c, s) =
+    case (fst(abigStep((Som current (Num 1)), s)) == fst(abigStep(end, s))) of
+        (True) -> (cbigStep (Atrib v (Som current (Num 1)), s))
+        (False) -> cbigStep(Seq (Atrib v (Som current (Num 1))) (Seq c (For v (Som current (Num 1)) end c)), s)
 
 
 -- Swap
@@ -131,26 +131,71 @@ cbigStep (Swap (Var x) (Var y), s) =
 meuEstado :: Estado
 meuEstado = [("x",3), ("y",0), ("z",0)]
 
-
 exemplo :: AExp
-exemplo = Mul (Num 3) (Sub (Var "x") (Var "y"))
+exemplo = Som (Num 3) (Som (Var "x") (Var "y"))
+
+exemplo2 :: AExp
+exemplo2 = Sub (Num 3) (Sub (Var "x") (Var "y"))
+
+exemplo3 :: AExp
+exemplo3 = Mul (Num 3) (Som (Var "x") (Var "y"))
+
+exemploAnd1 :: BExp
+exemploAnd1 = And TRUE FALSE
+
+exemploAnd2 :: BExp
+exemploAnd2 = And (TRUE) (Or TRUE FALSE)
+
+exemploOr1 :: BExp
+exemploOr1 = Or TRUE FALSE
+
+exemploOr2 :: BExp
+exemploOr2 = Or (FALSE) (And TRUE FALSE)
+
+exemploSeq1 :: CExp
+exemploSeq1 = (Seq (Atrib (Var "z") (Num 1)) (Atrib (Var "x") (Num 2)))
+
+exemploDo1 :: CExp
+exemploDo1 = (Do (Seq(Atrib (Var "x") (Sub (Var "x") (Num 1)))(Skip)) (Not (Ig (Var "x") (Num 1))))  
+
+exemploDo2 :: CExp
+exemploDo2 = (Do (Seq(Atrib (Var "x") (Som (Var "x") (Num 1)))(Skip)) (Not (Ig (Var "x") (Num 10))))
+
+exemploWhile1 :: CExp
+exemploWhile1 = (While (Ig (Var "x") (Num 10)) (Seq(Atrib (Var "x") (Som (Var "x") (Num 1)))(Skip)))
+
+exemploMultiAtrib :: CExp
+exemploMultiAtrib = (Multiatrib (Var "x") (Var "y") (Num 88) (Num 99))
+
+exemploRepeat1 :: CExp
+exemploRepeat1 = (Repeat (Seq(Atrib (Var "x") (Som (Var "x") (Num 1)))(Skip)) (Ig (Var "x") (Num 10)))
+
+exemploRepeat2 :: CExp
+exemploRepeat2 = (Repeat (Seq(Atrib (Var "x") (Som (Var "x") (Num 1)))(Skip)) (Ig (Var "x") (Num 20)))
+
+exemploSwap1 :: CExp
+exemploSwap1 = (Swap (Var "x") (Var "y"))
+
+exemploSwap2 :: CExp
+exemploSwap2 = (Seq (Seq (Atrib (Var "x") (Num 1)) (Atrib (Var "y") (Num 2))) (Swap(Var "x")(Var "y")))
+
+exemploFor1 :: CExp
+exemploFor1 = (For (Var "x") (Num 1) (Num 5) (Atrib (Var "x")(Som (Var "x")(Num 1))))
+
+exemploFor2 :: CExp
+exemploFor2 = (For (Var "x") (Num 1) (Num 10) (Atrib (Var "x")(Som (Var "x")(Num 2))))
 
 teste1 :: BExp
-teste1 = (Or (And (Ig (Som (Num 3) (Num 3))  (Mul (Num 2) (Num 3))) FALSE) TRUE)
---teste2 :: BExp
---teste2 = (Ig (Som (Var "x") (Num 3))  (Mul (Num 2) (Num 3)))
+teste1 = (Ig (Som (Num 3) (Num 3))  (Mul (Num 2) (Num 3)))
+teste2 :: BExp
+teste2 = (Ig (Som (Var "x") (Num 3))  (Mul (Num 2) (Num 3)))
 
 
---testec1 :: CExp
---testec1 = (Seq (Seq (Atrib (Var "z") (Var "x")) (Atrib (Var "x") (Var "y"))) 
---		(Atrib (Var "y") (Var "z")))
-
---fatorial :: CExp
---fatorial = (Seq (Atrib (Var "y") (Num 1))
---                (While (Not (Ig (Var "x") (Num 1)))
---                       (Seq (Atrib (Var "y") (Mul (Var "y") (Var "x")))
---                            (Atrib (Var "x") (Sub (Var "x") (Num 1))))))
-
+fatorial :: CExp
+fatorial = (Seq (Atrib (Var "y") (Num 1))
+                (While (Not (Ig (Var "x") (Num 1)))
+                       (Seq (Atrib (Var "y") (Mul (Var "y") (Var "x")))
+                            (Atrib (Var "x") (Sub (Var "x") (Num 1))))))
 
 
 --------- Trabalho ----------------
